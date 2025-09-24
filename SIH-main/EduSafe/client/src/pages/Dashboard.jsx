@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Dashboard = () => {
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [user, setUser] = useState(null);
   const [completedModules, setCompletedModules] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Get user data from localStorage
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
     }
@@ -23,15 +25,15 @@ const Dashboard = () => {
     // Load completed modules from localStorage (scoped per user)
     try {
       const currentUser = userData ? JSON.parse(userData) : null;
-      const userId = currentUser?.id || currentUser?._id || 'guest';
+      const userId = currentUser?.id || currentUser?._id || "guest";
       const scopedKey = `completedModules:${userId}`;
 
       // Migrate legacy key if present and scoped missing
-      const legacy = localStorage.getItem('completedModules');
+      const legacy = localStorage.getItem("completedModules");
       const scopedExisting = localStorage.getItem(scopedKey);
       if (!scopedExisting && legacy) {
         localStorage.setItem(scopedKey, legacy);
-        localStorage.removeItem('completedModules');
+        localStorage.removeItem("completedModules");
       }
 
       const stored = localStorage.getItem(scopedKey);
@@ -47,98 +49,104 @@ const Dashboard = () => {
       setLoading(true);
       // Try to fetch from API first
       try {
-        const response = await axios.get('http://localhost:5000/api/modules');
-        
+        const response = await axios.get("http://localhost:5000/api/modules");
+
         if (response.data.success) {
-          console.log('Modules data:', response.data.data.modules);
+          console.log("Modules data:", response.data.data.modules);
           setModules(response.data.data.modules);
           return; // Exit if successful
         } else if (response.data && Array.isArray(response.data)) {
-          console.log('Fallback modules data:', response.data);
+          console.log("Fallback modules data:", response.data);
           setModules(response.data);
           return; // Exit if successful
         }
       } catch (apiErr) {
-        console.error('API error:', apiErr);
+        console.error("API error:", apiErr);
         // Continue to fallback if API fails
       }
-      
+
       // Fallback: Always set dummy modules if API fails
-      console.log('Using fallback dummy modules');
+      console.log("Using fallback dummy modules");
       setModules([
         {
           _id: "dummy1",
           title: "Cyberbullying Awareness",
-          description: "Learn about cyberbullying, its impact, and how to prevent it.",
+          description:
+            "Learn about cyberbullying, its impact, and how to prevent it.",
           difficulty: "beginner",
-          thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3",
+          thumbnail:
+            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3",
           duration: "2 weeks",
           estimatedHours: 4,
           category: "Online Safety",
-          lessonCount: 5
+          lessonCount: 5,
         },
         {
           _id: "dummy2",
           title: "School Safety Fundamentals",
-          description: "Essential knowledge about physical safety in school environments.",
+          description:
+            "Essential knowledge about physical safety in school environments.",
           difficulty: "beginner",
-          thumbnail: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?ixlib=rb-4.0.3",
+          thumbnail:
+            "https://images.unsplash.com/photo-1580582932707-520aed937b7b?ixlib=rb-4.0.3",
           duration: "1 week",
           estimatedHours: 2,
           category: "Physical Safety",
-          lessonCount: 3
+          lessonCount: 3,
         },
         {
           _id: "dummy3",
           title: "Mental Health Awareness",
-          description: "Understand the importance of mental health and recognize warning signs.",
+          description:
+            "Understand the importance of mental health and recognize warning signs.",
           difficulty: "intermediate",
-          thumbnail: "https://images.unsplash.com/photo-1493836512294-502baa1986e2?ixlib=rb-4.0.3",
+          thumbnail:
+            "https://images.unsplash.com/photo-1493836512294-502baa1986e2?ixlib=rb-4.0.3",
           duration: "3 weeks",
           estimatedHours: 6,
           category: "Mental Health",
-          lessonCount: 8
-        }
+          lessonCount: 8,
+        },
       ]);
     } catch (err) {
-      console.error('Error in module loading process:', err);
-      setError('Failed to load modules. Please try again.');
+      console.error("Error in module loading process:", err);
+      setError("Failed to load modules. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     // Clear legacy progress key to avoid cross-user carryover
-    localStorage.removeItem('completedModules');
-    navigate('/login');
+    localStorage.removeItem("completedModules");
+    navigate("/login");
   };
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case 'beginner':
-        return 'bg-green-100 text-green-800';
-      case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'advanced':
-        return 'bg-red-100 text-red-800';
+      case "beginner":
+        return "bg-green-100 text-green-800";
+      case "intermediate":
+        return "bg-yellow-100 text-yellow-800";
+      case "advanced":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getDifficultyIcon = (difficulty) => {
     switch (difficulty) {
-      case 'beginner':
-        return '🟢';
-      case 'intermediate':
-        return '🟡';
-      case 'advanced':
-        return '🔴';
+      case "beginner":
+        return "🟢";
+      case "intermediate":
+        return "🟡";
+      case "advanced":
+        return "🔴";
       default:
-        return '⚪';
+        return "⚪";
     }
   };
 
@@ -151,14 +159,16 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-lg border border-indigo-100">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600 mx-auto mb-6"></div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">Loading Amazing Modules...</h3>
-          <p className="text-gray-600">🚀 Get ready for an incredible learning journey!</p>
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            Loading Amazing Modules...
+          </h3>
+          <p className="text-gray-600">
+            🚀 Get ready for an incredible learning journey!
+          </p>
         </div>
       </div>
     );
   }
-
-  // We've moved the dummy module logic to the fetchModules function
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -167,37 +177,44 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <Link
+                to="/"
+                className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+              >
                 EduSafe
               </Link>
             </div>
-            <div className="flex items-center space-x-8">
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
               {user && (
                 <span className="text-slate-700 font-medium flex items-center">
                   <span className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-3">
                     {user.username.charAt(0).toUpperCase()}
                   </span>
-                  Welcome, {user.username}
+                  <span className="hidden lg:inline">
+                    Welcome, {user.username}
+                  </span>
                 </span>
               )}
-              {(user?.role === 'teacher' || user?.role === 'admin') && (
+              {(user?.role === "teacher" || user?.role === "admin") && (
                 <button
-                  onClick={() => navigate('/reports-dashboard')}
+                  onClick={() => navigate("/reports-dashboard")}
                   className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
                 >
                   Reports
                 </button>
               )}
-              {user?.role === 'student' && (
+              {user?.role === "student" && (
                 <>
                   <button
-                    onClick={() => navigate('/report-issue')}
+                    onClick={() => navigate("/report-issue")}
                     className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
                   >
                     Report Issue
                   </button>
                   <button
-                    onClick={() => navigate('/student/profile')}
+                    onClick={() => navigate("/student/profile")}
                     className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
                   >
                     Profile
@@ -205,20 +222,131 @@ const Dashboard = () => {
                 </>
               )}
               <button
-                onClick={() => navigate('/leaderboard')}
+                onClick={() => navigate("/leaderboard")}
                 className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
               >
                 Leaderboard
               </button>
               <button
-                onClick={() => navigate('/stories')}
+                onClick={() => navigate("/stories")}
                 className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
               >
                 Stories
               </button>
-              <button 
+              <button
                 onClick={handleLogout}
                 className="text-slate-600 hover:text-red-600 transition duration-200 font-medium"
+              >
+                Logout
+              </button>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-slate-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 p-2"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  {isMenuOpen ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation Menu */}
+          <div
+            className={`md:hidden transition-all duration-300 ease-in-out ${
+              isMenuOpen
+                ? "max-h-96 opacity-100"
+                : "max-h-0 opacity-0 overflow-hidden"
+            }`}
+          >
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-slate-200">
+              {user && (
+                <div className="flex items-center px-3 py-2 text-slate-700 font-medium">
+                  <span className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-3">
+                    {user.username.charAt(0).toUpperCase()}
+                  </span>
+                  Welcome, {user.username}
+                </div>
+              )}
+              {(user?.role === "teacher" || user?.role === "admin") && (
+                <button
+                  onClick={() => {
+                    navigate("/reports-dashboard");
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition duration-200 font-medium rounded-md"
+                >
+                  Reports
+                </button>
+              )}
+              {user?.role === "student" && (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/report-issue");
+                      setIsMenuOpen(false);
+                    }}
+                    className="block w-full text-left px-3 py-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition duration-200 font-medium rounded-md"
+                  >
+                    Report Issue
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/student/profile");
+                      setIsMenuOpen(false);
+                    }}
+                    className="block w-full text-left px-3 py-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition duration-200 font-medium rounded-md"
+                  >
+                    Profile
+                  </button>
+                </>
+              )}
+              <button
+                onClick={() => {
+                  navigate("/leaderboard");
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full text-left px-3 py-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition duration-200 font-medium rounded-md"
+              >
+                Leaderboard
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/stories");
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full text-left px-3 py-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition duration-200 font-medium rounded-md"
+              >
+                Stories
+              </button>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full text-left px-3 py-2 text-slate-600 hover:text-red-600 hover:bg-slate-50 transition duration-200 font-medium rounded-md"
               >
                 Logout
               </button>

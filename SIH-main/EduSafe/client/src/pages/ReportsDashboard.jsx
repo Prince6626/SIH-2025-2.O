@@ -200,7 +200,7 @@ const ReportsDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="bg-white shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -364,7 +364,7 @@ const ReportsDashboard = () => {
               <div className="divide-y divide-gray-200">
                 {reports.map((report) => (
                   <div key={report._id} className="p-6 hover:bg-gray-50 transition duration-200">
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
                           <span className="text-2xl">{getCategoryIcon(report.category)}</span>
@@ -379,7 +379,7 @@ const ReportsDashboard = () => {
                         
                         <p className="text-gray-600 mb-3 line-clamp-2">{report.description}</p>
                         
-                        <div className="flex items-center space-x-6 text-sm text-gray-500">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
                           <span>📍 {report.location}</span>
                           {report.geo?.lat && report.geo?.lng && (
                             <a
@@ -406,7 +406,7 @@ const ReportsDashboard = () => {
                         </div>
                       </div>
                       
-                      <div className="ml-4 flex-shrink-0 flex items-center space-x-3">
+                      <div className="mt-3 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center space-x-3">
                         <button className="text-blue-600 hover:text-blue-800 font-medium">
                           View Details →
                         </button>
@@ -442,7 +442,7 @@ const ReportsDashboard = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-between">
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="text-sm text-gray-700">
                 Page {currentPage} of {totalPages}
               </div>

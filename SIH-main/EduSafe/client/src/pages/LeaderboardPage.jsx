@@ -70,22 +70,26 @@ const LeaderboardPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/dashboard'))}
-          className="inline-flex items-center text-slate-600 hover:text-blue-600 transition-colors px-3 py-2 rounded-lg hover:bg-slate-100"
-          aria-label="Go back"
-        >
-          <FaArrowLeft className="mr-2" />
-          <span>Back</span>
-        </button>
-        <h1 className="text-3xl font-bold text-center flex-1 -ml-10">Leaderboard</h1>
-        <span className="w-[84px]" />
+      <div className="grid grid-cols-3 items-center mb-6">
+        <div className="flex justify-start">
+          <button
+            onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/dashboard'))}
+            className="inline-flex items-center text-slate-600 hover:text-blue-600 transition-colors px-3 py-2 rounded-lg hover:bg-slate-100"
+            aria-label="Go back"
+          >
+            <FaArrowLeft className="mr-2" />
+            <span>Back</span>
+          </button>
+        </div>
+        <h1 className="text-3xl font-bold text-center">Leaderboard</h1>
+        <div className="flex justify-end">
+          <span className="w-[84px]" />
+        </div>
       </div>
       
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-blue-600 text-white px-6 py-4 flex items-center">
+        {/* Header (hidden on mobile) */}
+        <div className="hidden md:flex bg-blue-600 text-white px-6 py-4 items-center">
           <div className="w-16 text-center font-bold">Rank</div>
           <div className="flex-1 font-bold">User</div>
           <div className="w-24 text-center font-bold">Points</div>
@@ -109,10 +113,10 @@ const LeaderboardPage = () => {
             return (
               <div 
                 key={user?._id || `${safeUsername}-${safeRank}`} 
-                className="px-6 py-4 flex items-center hover:bg-gray-50 transition-colors"
+                className="px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center hover:bg-gray-50 transition-colors"
               >
                 {/* Rank */}
-                <div className="w-16 text-center">
+                <div className="md:w-16 w-full md:text-center text-left mb-2 md:mb-0">
                   {renderRankBadge(safeRank)}
                 </div>
                 
@@ -122,18 +126,18 @@ const LeaderboardPage = () => {
                     {safeUsername.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <div className="font-medium">{safeUsername}</div>
+                    <div className="font-medium break-words">{safeUsername}</div>
                     <div className="text-sm text-gray-500 capitalize">{safeRole}</div>
                   </div>
                 </div>
                 
                 {/* Points */}
-                <div className="w-24 text-center font-semibold">
+                <div className="md:w-24 w-full md:text-center text-left font-semibold mt-2 md:mt-0">
                   {safePoints}
                 </div>
                 
                 {/* Badge */}
-                <div className="w-32 text-center">
+                <div className="md:w-32 w-full md:text-center text-left mt-2 md:mt-0">
                   <span className={`${badge.color} text-white text-xs px-2 py-1 rounded-full`}>
                     {badge.name}
                   </span>

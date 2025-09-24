@@ -103,7 +103,7 @@ const moduleSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Module description is required'],
     trim: true,
-    maxlength: [1000, 'Module description cannot exceed 1000 characters']
+    maxlength: [1000000, 'Module description cannot exceed 1000 characters']
   },
   difficulty: {
     type: String,

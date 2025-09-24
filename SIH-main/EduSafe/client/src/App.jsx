@@ -12,6 +12,7 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import StoriesPage from './pages/StoriesPage';
 import AIChatbot from './pages/AIChatbot';
 import AdminQuizPanel from './pages/AdminQuizPanel';
+import StudentProfile from './pages/StudentProfile';
 
 function App() {
   const ChatbotButton = () => {
@@ -44,6 +45,7 @@ function App() {
           <Route path="/stories" element={<StoriesPage />} />
           <Route path="/chatbot" element={<AIChatbot />} />
           <Route path="/admin/quiz" element={<AdminQuizPanel />} />
+          <Route path="/student/profile" element={<StudentProfile />} />
         </Routes>
         <ChatbotButton />
       </div>

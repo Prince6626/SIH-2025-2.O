@@ -53,13 +53,28 @@ const ModuleDetailPage = () => {
 
   useEffect(() => {
     // Load initial completed state from localStorage
-    const stored = localStorage.getItem('completedModules');
-    if (stored) {
-      try {
+    try {
+      const userRaw = localStorage.getItem('user');
+      const userObj = userRaw ? JSON.parse(userRaw) : null;
+      const userId = userObj?.id || userObj?._id || 'guest';
+      const scopedKey = `completedModules:${userId}`;
+      const stored = localStorage.getItem(scopedKey);
+      if (stored) {
         const arr = JSON.parse(stored);
         setCompleted(Array.isArray(arr) && arr.includes(id));
-      } catch (e) {}
-    }
+      } else {
+        // fallback migration from legacy
+        const legacy = localStorage.getItem('completedModules');
+        if (legacy) {
+          const arr = JSON.parse(legacy);
+          if (Array.isArray(arr) && arr.length > 0) {
+            localStorage.setItem(scopedKey, legacy);
+            localStorage.removeItem('completedModules');
+            setCompleted(arr.includes(id));
+          }
+        }
+      }
+    } catch {}
   }, [id]);
 
   const markModuleCompleted = async () => {
@@ -69,12 +84,16 @@ const ModuleDetailPage = () => {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (res.data?.success) {
-        // Save to localStorage
-        const stored = localStorage.getItem('completedModules');
+        // Save to localStorage (scoped per user)
+        const userRaw = localStorage.getItem('user');
+        const userObj = userRaw ? JSON.parse(userRaw) : null;
+        const userId = userObj?.id || userObj?._id || 'guest';
+        const scopedKey = `completedModules:${userId}`;
+        const stored = localStorage.getItem(scopedKey);
         let arr = [];
         try { arr = stored ? JSON.parse(stored) : []; } catch (e) { arr = []; }
         if (!arr.includes(id)) arr.push(id);
-        localStorage.setItem('completedModules', JSON.stringify(arr));
+        localStorage.setItem(scopedKey, JSON.stringify(arr));
         setCompleted(true);
         alert(`Module completed! +${res.data.data.pointsAwarded} points. Total: ${res.data.data.userTotalPoints}`);
       } else {
@@ -125,6 +144,7 @@ const ModuleDetailPage = () => {
   };
 
   const videoLessons = module?.lessons?.filter(lesson => lesson.type === 'video') || [];
+  const videoCount = (videoLessons?.length || 0) + (module?.introVideoUrl ? 1 : 0);
 
   if (loading) {
     return (
@@ -204,7 +224,7 @@ const ModuleDetailPage = () => {
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  🎥 Videos ({videoLessons.length})
+                  🎥 Videos ({videoCount})
                 </button>
                 <button
                   onClick={() => setActiveSection('quiz')}

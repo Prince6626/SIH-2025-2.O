@@ -35,6 +35,47 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: [0, 'Points cannot be negative']
+  },
+  age: {
+    type: Number,
+    min: [1, 'Age must be at least 1'],
+    max: [120, 'Age seems invalid'],
+    default: undefined
+  },
+  bloodGroup: {
+    type: String,
+    trim: true,
+    uppercase: true,
+    enum: {
+      values: [
+        'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-',
+        // allow empty via undefined
+      ],
+      message: 'Invalid blood group'
+    },
+    default: undefined
+  },
+  parentMobile: {
+    type: String,
+    trim: true,
+    match: [/^\+?[0-9]{7,15}$/, 'Enter a valid mobile number'],
+    default: undefined
+  },
+  dateOfBirth: {
+    type: Date,
+    default: undefined
+  },
+  profilePhoto: {
+    type: String,
+    trim: true,
+    validate: {
+      validator: function(v) {
+        if (!v) return true;
+        return /^https?:\/\/.+/.test(v);
+      },
+      message: 'Profile photo must be a valid URL'
+    },
+    default: undefined
   }
 }, {
   timestamps: true // Adds createdAt and updatedAt fields

@@ -20,14 +20,26 @@ const Dashboard = () => {
     // Fetch modules
     fetchModules();
 
-    // Load completed modules from localStorage
-    const stored = localStorage.getItem('completedModules');
-    if (stored) {
-      try {
+    // Load completed modules from localStorage (scoped per user)
+    try {
+      const currentUser = userData ? JSON.parse(userData) : null;
+      const userId = currentUser?.id || currentUser?._id || 'guest';
+      const scopedKey = `completedModules:${userId}`;
+
+      // Migrate legacy key if present and scoped missing
+      const legacy = localStorage.getItem('completedModules');
+      const scopedExisting = localStorage.getItem(scopedKey);
+      if (!scopedExisting && legacy) {
+        localStorage.setItem(scopedKey, legacy);
+        localStorage.removeItem('completedModules');
+      }
+
+      const stored = localStorage.getItem(scopedKey);
+      if (stored) {
         const arr = JSON.parse(stored);
         if (Array.isArray(arr)) setCompletedModules(arr);
-      } catch (e) {}
-    }
+      }
+    } catch {}
   }, []);
 
   const fetchModules = async () => {
@@ -99,6 +111,8 @@ const Dashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Clear legacy progress key to avoid cross-user carryover
+    localStorage.removeItem('completedModules');
     navigate('/login');
   };
 
@@ -175,12 +189,20 @@ const Dashboard = () => {
                 </button>
               )}
               {user?.role === 'student' && (
-                <button
-                  onClick={() => navigate('/report-issue')}
-                  className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
-                >
-                  Report Issue
-                </button>
+                <>
+                  <button
+                    onClick={() => navigate('/report-issue')}
+                    className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
+                  >
+                    Report Issue
+                  </button>
+                  <button
+                    onClick={() => navigate('/student/profile')}
+                    className="text-slate-600 hover:text-blue-600 transition duration-200 font-medium"
+                  >
+                    Profile
+                  </button>
+                </>
               )}
               <button
                 onClick={() => navigate('/leaderboard')}

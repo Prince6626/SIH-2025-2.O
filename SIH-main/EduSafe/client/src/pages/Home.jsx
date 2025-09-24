@@ -75,12 +75,7 @@ const Home = () => {
             >
               Create Account
             </Link>
-            <Link
-              to="/stories"
-              className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-lg"
-            >
-              View Stories
-            </Link>
+            
           </div>
 
           {/* Stats

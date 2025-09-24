@@ -365,9 +365,9 @@ const Dashboard = () => {
 
                       {/* Lesson Count & Action */}
                       <div className="flex items-center justify-between pt-3">
-                        <span className="text-sm text-slate-600 font-medium">
+                        {/* <span className="text-sm text-slate-600 font-medium">
                           {module.lessonCount || 0} lessons
-                        </span>
+                        </span> */}
                         <span className="text-blue-600 font-semibold text-sm group-hover:text-indigo-600 transition-colors">
                           Start Learning →
                         </span>

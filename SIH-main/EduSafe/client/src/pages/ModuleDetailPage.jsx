@@ -312,7 +312,7 @@ const ModuleDetailPage = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-green-50 rounded-lg p-4">
+                    {/* <div className="bg-green-50 rounded-lg p-4">
                       <div className="flex items-center">
                         <div className="text-2xl mr-3">📚</div>
                         <div>
@@ -320,7 +320,7 @@ const ModuleDetailPage = () => {
                           <div className="font-semibold text-gray-900">{module.lessonCount}</div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     <div className="bg-purple-50 rounded-lg p-4">
                       <div className="flex items-center">
                         <div className="text-2xl mr-3">📂</div>

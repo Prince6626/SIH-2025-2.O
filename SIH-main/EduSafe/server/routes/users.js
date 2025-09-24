@@ -8,8 +8,8 @@ router.get('/leaderboard', async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit) : 10;
     
-    // Find users, sort by points in descending order, limit to requested number
-    const leaderboard = await User.find({})
+    // Find students only, sort by points in descending order, limit to requested number
+    const leaderboard = await User.find({ role: 'student' })
       .select('username points role')
       .sort({ points: -1 })
       .limit(limit);

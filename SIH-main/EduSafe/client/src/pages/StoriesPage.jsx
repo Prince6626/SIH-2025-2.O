@@ -305,10 +305,10 @@ const StoriesPage = () => {
                   <FaHeart className={`mr-2 ${likedStories.has(story._id) ? 'fill-current' : ''}`} /> 
                   <span className="font-medium text-sm">{story.likes}</span>
                 </button>
-                <button className="flex items-center px-4 py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+                {/* <button className="flex items-center px-4 py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
                   <FaShare className="mr-2" /> 
                   <span className="font-medium text-sm">Share</span>
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 
 // Enhanced MongoDB connection with better error handling
 const connectDB = async () => {
-  const primaryURI = process.env.MONGODB_URI || 'mongodb+srv://testuser:Test%401234@cluster0.ts66lut.mongodb.net/edusafe';
+  const primaryURI ='mongodb+srv://testuser:Test%401234@cluster0.ts66lut.mongodb.net/edusafe';
   const fallbackLocalURI = 'mongodb://127.0.0.1:27017/edusafe';
 
   // MongoDB connection options (updated for latest MongoDB driver)

@@ -15,7 +15,8 @@ const AdminQuizPanel = () => {
     thumbnail: '',
     introVideoUrl: '',
     isPublished: true,
-    isActive: true
+    isActive: true,
+    notes: ''
   });
   const [selectedModuleId, setSelectedModuleId] = useState('');
   const [quiz, setQuiz] = useState(null);
@@ -169,7 +170,7 @@ const AdminQuizPanel = () => {
                   const val = e.target.value;
                   setSelectedModuleId(val);
                   if(!val){
-                    setModuleForm({title:'',description:'',difficulty:'beginner',duration:'1 week',estimatedHours:2,category:'Disaster',tags:'',thumbnail:'',introVideoUrl:'',isPublished:true,isActive:true});
+                    setModuleForm({title:'',description:'',difficulty:'beginner',duration:'1 week',estimatedHours:2,category:'Disaster',tags:'',thumbnail:'',introVideoUrl:'',isPublished:true,isActive:true,notes:''});
                     return;
                   }
                   const found = modules.find(m=>m._id===val);
@@ -185,7 +186,8 @@ const AdminQuizPanel = () => {
                       thumbnail: found.thumbnail || '',
                       introVideoUrl: found.introVideoUrl || '',
                       isPublished: Boolean(found.isPublished),
-                      isActive: Boolean(found.isActive)
+                      isActive: Boolean(found.isActive),
+                      notes: found.notes || ''
                     });
                   }
                 }}
@@ -200,7 +202,7 @@ const AdminQuizPanel = () => {
                 className="px-3 py-2 text-sm border rounded-md text-gray-700 hover:bg-gray-100"
                 onClick={()=>{
                   setSelectedModuleId('');
-                  setModuleForm({title:'',description:'',difficulty:'beginner',duration:'1 week',estimatedHours:2,category:'Disaster',tags:'',thumbnail:'',introVideoUrl:'',isPublished:true,isActive:true});
+                  setModuleForm({title:'',description:'',difficulty:'beginner',duration:'1 week',estimatedHours:2,category:'Disaster',tags:'',thumbnail:'',introVideoUrl:'',isPublished:true,isActive:true,notes:''});
                 }}
               >Clear</button>
             </div>
@@ -246,6 +248,10 @@ const AdminQuizPanel = () => {
             <label className="block text-sm text-gray-700 mb-1">Disaster Video URL (optional)</label>
             <input className="w-full border rounded-md p-2" placeholder="https://..." value={moduleForm.introVideoUrl} onChange={(e)=>setModuleForm(p=>({...p,introVideoUrl:e.target.value}))} />
           </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-700 mb-1">Notes / Study Material</label>
+              <textarea rows={6} className="w-full border rounded-md p-2" placeholder="Add detailed notes or study material..." value={moduleForm.notes} onChange={(e)=>setModuleForm(p=>({...p,notes:e.target.value}))} />
+            </div>
             <div className="flex items-center gap-4 md:col-span-2">
               <label className="text-sm text-gray-700 flex items-center gap-2">
                 <input type="checkbox" checked={moduleForm.isPublished} onChange={(e)=>setModuleForm(p=>({...p,isPublished:e.target.checked}))} /> Published
@@ -264,7 +270,7 @@ const AdminQuizPanel = () => {
                   const res=await axios.post('http://localhost:5000/api/modules',payload,{headers:authHeaders()});
                   if(res.data.success){
                     alert('Module created');
-                    setModuleForm({title:'',description:'',difficulty:'beginner',duration:'1 week',estimatedHours:2,category:'Disaster',tags:'',thumbnail:'',introVideoUrl:'',isPublished:true,isActive:true});
+                    setModuleForm({title:'',description:'',difficulty:'beginner',duration:'1 week',estimatedHours:2,category:'Disaster',tags:'',thumbnail:'',introVideoUrl:'',isPublished:true,isActive:true,notes:''});
                     const reload=await axios.get('http://localhost:5000/api/modules?limit=100');
                     if(reload.data.success){setModules(reload.data.data.modules)}
                   }

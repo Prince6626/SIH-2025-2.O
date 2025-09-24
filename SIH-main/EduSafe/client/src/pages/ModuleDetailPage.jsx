@@ -227,6 +227,16 @@ const ModuleDetailPage = () => {
                   🎥 Videos ({videoCount})
                 </button>
                 <button
+                  onClick={() => setActiveSection('notes')}
+                  className={`w-full text-left px-3 py-2 rounded-md transition duration-200 ${
+                    activeSection === 'notes'
+                      ? 'bg-blue-100 text-blue-700 font-medium'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  📝 Notes
+                </button>
+                <button
                   onClick={() => setActiveSection('quiz')}
                   className={`w-full text-left px-3 py-2 rounded-md transition duration-200 ${
                     activeSection === 'quiz'
@@ -444,6 +454,19 @@ const ModuleDetailPage = () => {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No video lessons available</h3>
                     <p className="text-gray-500">This module doesn't contain any video content yet.</p>
                   </div>
+                )}
+              </div>
+            )}
+
+            {activeSection === 'notes' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Notes / Study Material</h2>
+                {module.notes ? (
+                  <div className="prose max-w-none">
+                    <pre className="whitespace-pre-wrap break-words text-gray-800">{module.notes}</pre>
+                  </div>
+                ) : (
+                  <div className="text-gray-500">No notes available for this module yet.</div>
                 )}
               </div>
             )}

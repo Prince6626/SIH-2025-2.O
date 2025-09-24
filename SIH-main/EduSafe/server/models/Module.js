@@ -190,6 +190,11 @@ const moduleSchema = new mongoose.Schema({
       },
       message: 'Intro video must be a valid URL'
     }
+  },
+  notes: {
+    type: String,
+    trim: true,
+    maxlength: [20000, 'Notes cannot exceed 20000 characters']
   }
 }, {
   timestamps: true

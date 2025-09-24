@@ -104,7 +104,8 @@ router.post('/', authenticateToken, requireTeacherOrAdmin, async (req, res) => {
       thumbnail,
       introVideoUrl,
       isPublished = true,
-      isActive = true
+      isActive = true,
+      notes
     } = req.body;
 
     if (!title || !description || !difficulty || !duration || !estimatedHours) {
@@ -124,7 +125,8 @@ router.post('/', authenticateToken, requireTeacherOrAdmin, async (req, res) => {
       instructor: req.user._id,
       isPublished,
       isActive,
-      lessons: []
+      lessons: [],
+      notes
     });
 
     return res.status(201).json({ success: true, data: { module: moduleDoc } });
@@ -158,7 +160,7 @@ router.put('/:id', authenticateToken, requireTeacherOrAdmin, async (req, res) =>
       return res.status(403).json({ success: false, message: 'Not authorized to edit this module' });
     }
 
-    const allowed = ['title','description','difficulty','duration','estimatedHours','category','tags','thumbnail','introVideoUrl','isPublished','isActive'];
+    const allowed = ['title','description','difficulty','duration','estimatedHours','category','tags','thumbnail','introVideoUrl','isPublished','isActive','notes'];
     allowed.forEach(key => {
       if (key in req.body) moduleDoc[key] = req.body[key];
     });

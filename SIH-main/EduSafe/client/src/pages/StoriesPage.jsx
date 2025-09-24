@@ -260,9 +260,8 @@ const StoriesPage = () => {
                 {story.title}
               </h2>
               <p className="text-slate-600 mb-4 leading-relaxed text-sm">
-                {story.content.length > 120 
-                  ? `${story.content.substring(0, 120)}...` 
-                  : story.content}
+                {
+                  story.content}
               </p>
               
               {/* Tags */}

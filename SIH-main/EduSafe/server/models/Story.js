@@ -11,7 +11,7 @@ const storySchema = new mongoose.Schema({
     type: String,
     required: [true, 'Content is required'],
     trim: true,
-    maxlength: [5000, 'Content cannot exceed 5000 characters']
+    maxlength: [100000, 'Content cannot exceed 5000 characters']
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,

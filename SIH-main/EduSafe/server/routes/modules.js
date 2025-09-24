@@ -1,7 +1,7 @@
 const express = require('express');
 const Module = require('../models/Module');
 const Quiz = require('../models/Quiz');
-const { authenticateToken, requireTeacherOrAdmin } = require('../middleware/auth');
+const { authenticateToken, requireTeacherOrAdmin, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -85,6 +85,92 @@ router.get('/', async (req, res) => {
       success: false,
       message: 'Server error while fetching modules'
     });
+  }
+});
+
+// @route   POST /api/modules
+// @desc    Create a new module (Admin or Teacher). For disaster modules set category to "Disaster".
+// @access  Protected (admin/teacher)
+router.post('/', authenticateToken, requireTeacherOrAdmin, async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      difficulty,
+      duration,
+      estimatedHours,
+      category = 'Disaster',
+      tags = [],
+      thumbnail,
+      introVideoUrl,
+      isPublished = true,
+      isActive = true
+    } = req.body;
+
+    if (!title || !description || !difficulty || !duration || !estimatedHours) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    const moduleDoc = await Module.create({
+      title,
+      description,
+      difficulty,
+      duration,
+      estimatedHours,
+      category,
+      tags,
+      thumbnail,
+      introVideoUrl,
+      instructor: req.user._id,
+      isPublished,
+      isActive,
+      lessons: []
+    });
+
+    return res.status(201).json({ success: true, data: { module: moduleDoc } });
+  } catch (error) {
+    console.error('Error creating module:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ success: false, message: 'Validation error', errors: Object.values(error.errors).map(e => e.message) });
+    }
+    return res.status(500).json({ success: false, message: 'Server error while creating module' });
+  }
+});
+
+// @route   PUT /api/modules/:id
+// @desc    Update an existing module (Admin or Teacher who owns it)
+// @access  Protected (admin/teacher)
+router.put('/:id', authenticateToken, requireTeacherOrAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ success: false, message: 'Invalid module ID format' });
+    }
+
+    const moduleDoc = await Module.findById(id);
+    if (!moduleDoc) {
+      return res.status(404).json({ success: false, message: 'Module not found' });
+    }
+
+    // If not admin, ensure instructor matches current user
+    const isAdmin = req.user.role === 'admin';
+    if (!isAdmin && String(moduleDoc.instructor) !== String(req.user._id)) {
+      return res.status(403).json({ success: false, message: 'Not authorized to edit this module' });
+    }
+
+    const allowed = ['title','description','difficulty','duration','estimatedHours','category','tags','thumbnail','introVideoUrl','isPublished','isActive'];
+    allowed.forEach(key => {
+      if (key in req.body) moduleDoc[key] = req.body[key];
+    });
+
+    await moduleDoc.save();
+    return res.json({ success: true, data: { module: moduleDoc } });
+  } catch (error) {
+    console.error('Error updating module:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ success: false, message: 'Validation error', errors: Object.values(error.errors).map(e => e.message) });
+    }
+    return res.status(500).json({ success: false, message: 'Server error while updating module' });
   }
 });
 

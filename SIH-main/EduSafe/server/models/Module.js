@@ -180,6 +180,16 @@ const moduleSchema = new mongoose.Schema({
       },
       message: 'Thumbnail must be a valid URL'
     }
+  },
+  introVideoUrl: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        if (!v) return true; // Optional field
+        return /^https?:\/\/.+/.test(v);
+      },
+      message: 'Intro video must be a valid URL'
+    }
   }
 }, {
   timestamps: true

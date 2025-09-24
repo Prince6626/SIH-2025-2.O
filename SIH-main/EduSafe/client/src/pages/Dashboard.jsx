@@ -258,6 +258,7 @@ const Dashboard = () => {
                         src={module.thumbnail}
                         alt={module.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e)=>{ e.currentTarget.onerror=null; e.currentTarget.src='https://images.unsplash.com/photo-1523246191915-37fe4ad2cc87?q=80&w=1200&auto=format&fit=crop'; }}
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full">

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaTrophy, FaMedal } from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaArrowLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const LeaderboardPage = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -68,7 +70,18 @@ const LeaderboardPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Leaderboard</h1>
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/dashboard'))}
+          className="inline-flex items-center text-slate-600 hover:text-blue-600 transition-colors px-3 py-2 rounded-lg hover:bg-slate-100"
+          aria-label="Go back"
+        >
+          <FaArrowLeft className="mr-2" />
+          <span>Back</span>
+        </button>
+        <h1 className="text-3xl font-bold text-center flex-1 -ml-10">Leaderboard</h1>
+        <span className="w-[84px]" />
+      </div>
       
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Header */}

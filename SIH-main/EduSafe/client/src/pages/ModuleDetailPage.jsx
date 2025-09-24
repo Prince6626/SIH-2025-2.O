@@ -254,7 +254,7 @@ const ModuleDetailPage = () => {
                     </div>
                   </div>
 
-                  {/* Module Thumbnail */}
+                  {/* Module Thumbnail (Overview shows image only) */}
                   {module.thumbnail && (
                     <div className="mb-6">
                       <img
@@ -327,17 +327,17 @@ const ModuleDetailPage = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Video Lessons</h2>
                 
-                {videoLessons.length > 0 ? (
+                {videoLessons.length > 0 || module.introVideoUrl ? (
                   <div className="space-y-6">
                     {/* Video Player */}
-                    {selectedVideo && (
+                    {(selectedVideo || module.introVideoUrl) && (
                       <div className="mb-8">
                         <div className="bg-black rounded-lg overflow-hidden">
                           <iframe
                             width="100%"
                             height="400"
-                            src={`https://www.youtube.com/embed/${getVideoId(selectedVideo.videoUrl)}`}
-                            title={selectedVideo.title}
+                            src={`https://www.youtube.com/embed/${getVideoId((selectedVideo && selectedVideo.videoUrl) || module.introVideoUrl)}`}
+                            title={selectedVideo ? selectedVideo.title : module.title}
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
@@ -345,14 +345,44 @@ const ModuleDetailPage = () => {
                           ></iframe>
                         </div>
                         <div className="mt-4">
-                          <h3 className="text-xl font-semibold text-gray-900">{selectedVideo.title}</h3>
-                          <p className="text-gray-600 mt-2">{selectedVideo.content}</p>
+                          <h3 className="text-xl font-semibold text-gray-900">{selectedVideo ? selectedVideo.title : 'Introduction'}</h3>
+                          {selectedVideo && <p className="text-gray-600 mt-2">{selectedVideo.content}</p>}
                         </div>
                       </div>
                     )}
 
                     {/* Video List */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {module.introVideoUrl && (
+                        <div
+                          onClick={() => setSelectedVideo(null)}
+                          className={`cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                            selectedVideo == null ? 'border-blue-500 shadow-lg' : 'border-gray-200 hover:border-blue-300 hover:shadow-md'
+                          }`}
+                        >
+                          <div className="relative">
+                            <img
+                              src={getVideoThumbnail(module.introVideoUrl) || '/api/placeholder/300/200'}
+                              alt={`${module.title} intro`}
+                              className="w-full h-40 object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                              <div className="bg-white bg-opacity-90 rounded-full p-3">
+                                <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                              Intro
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-semibold text-gray-900 mb-1">Introduction</h4>
+                            <p className="text-sm text-gray-600 line-clamp-2">Overview video</p>
+                          </div>
+                        </div>
+                      )}
                       {videoLessons.map((lesson, index) => (
                         <div
                           key={lesson._id}

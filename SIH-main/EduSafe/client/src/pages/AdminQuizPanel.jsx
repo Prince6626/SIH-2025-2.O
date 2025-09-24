@@ -4,9 +4,23 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminQuizPanel = () => {
   const [modules, setModules] = useState([]);
+  const [moduleForm, setModuleForm] = useState({
+    title: '',
+    description: '',
+    difficulty: 'beginner',
+    duration: '1 week',
+    estimatedHours: 2,
+    category: 'Disaster',
+    tags: '',
+    thumbnail: '',
+    introVideoUrl: '',
+    isPublished: true,
+    isActive: true
+  });
   const [selectedModuleId, setSelectedModuleId] = useState('');
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [activeSection, setActiveSection] = useState('modules');
   const [form, setForm] = useState({
     questionText: '',
     options: [
@@ -110,28 +124,138 @@ const AdminQuizPanel = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Quiz Panel</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Panel</h1>
 
-        <div className="bg-white border rounded-lg p-4 mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Select Module</label>
-          <select
-            className="w-full border rounded-md p-2"
-            value={selectedModuleId}
-            onChange={async (e) => {
-              const val = e.target.value;
-              setSelectedModuleId(val);
-              if (val) await loadQuiz(val);
-              else setQuiz(null);
-            }}
+        {/* Section Switcher */}
+        <div className="bg-white border rounded-lg p-2 mb-6 flex items-center gap-2">
+          <button
+            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === 'modules' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            onClick={() => setActiveSection('modules')}
           >
-            <option value="">-- Choose a module --</option>
-            {modules.map(m => (
-              <option key={m._id} value={m._id}>{m.title}</option>
-            ))}
-          </select>
+            Modules
+          </button>
+          <button
+            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeSection === 'quiz' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            onClick={() => setActiveSection('quiz')}
+          >
+            Quiz
+          </button>
         </div>
 
-        {selectedModuleId && (
+        {activeSection === 'modules' && (
+        <div className="bg-white border rounded-lg p-4 mb-6">
+          <h2 className="text-lg font-semibold mb-4">Create or Edit Disaster Module</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Title</label>
+              <input className="w-full border rounded-md p-2" value={moduleForm.title} onChange={(e)=>setModuleForm(p=>({...p,title:e.target.value}))} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Difficulty</label>
+              <select className="w-full border rounded-md p-2" value={moduleForm.difficulty} onChange={(e)=>setModuleForm(p=>({...p,difficulty:e.target.value}))}>
+                <option value="beginner">beginner</option>
+                <option value="intermediate">intermediate</option>
+                <option value="advanced">advanced</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-700 mb-1">Description</label>
+              <textarea rows={3} className="w-full border rounded-md p-2" value={moduleForm.description} onChange={(e)=>setModuleForm(p=>({...p,description:e.target.value}))} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Duration</label>
+              <input className="w-full border rounded-md p-2" value={moduleForm.duration} onChange={(e)=>setModuleForm(p=>({...p,duration:e.target.value}))} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Estimated Hours</label>
+              <input type="number" min={0.5} step={0.5} className="w-full border rounded-md p-2" value={moduleForm.estimatedHours} onChange={(e)=>setModuleForm(p=>({...p,estimatedHours:Number(e.target.value)}))} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Category</label>
+              <input className="w-full border rounded-md p-2" value={moduleForm.category} onChange={(e)=>setModuleForm(p=>({...p,category:e.target.value}))} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">Tags (comma separated)</label>
+              <input className="w-full border rounded-md p-2" value={moduleForm.tags} onChange={(e)=>setModuleForm(p=>({...p,tags:e.target.value}))} />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-700 mb-1">Thumbnail URL</label>
+              <input className="w-full border rounded-md p-2" value={moduleForm.thumbnail} onChange={(e)=>setModuleForm(p=>({...p,thumbnail:e.target.value}))} />
+            </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm text-gray-700 mb-1">Disaster Video URL (optional)</label>
+            <input className="w-full border rounded-md p-2" placeholder="https://..." value={moduleForm.introVideoUrl} onChange={(e)=>setModuleForm(p=>({...p,introVideoUrl:e.target.value}))} />
+          </div>
+            <div className="flex items-center gap-4 md:col-span-2">
+              <label className="text-sm text-gray-700 flex items-center gap-2">
+                <input type="checkbox" checked={moduleForm.isPublished} onChange={(e)=>setModuleForm(p=>({...p,isPublished:e.target.checked}))} /> Published
+              </label>
+              <label className="text-sm text-gray-700 flex items-center gap-2">
+                <input type="checkbox" checked={moduleForm.isActive} onChange={(e)=>setModuleForm(p=>({...p,isActive:e.target.checked}))} /> Active
+              </label>
+            </div>
+          </div>
+          <div className="mt-4 flex gap-3">
+            <button
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
+              onClick={async()=>{
+                try{
+                  const payload={...moduleForm,tags:moduleForm.tags?moduleForm.tags.split(',').map(t=>t.trim()).filter(Boolean):[]};
+                  const res=await axios.post('http://localhost:5000/api/modules',payload,{headers:authHeaders()});
+                  if(res.data.success){
+                    alert('Module created');
+                    setModuleForm({title:'',description:'',difficulty:'beginner',duration:'1 week',estimatedHours:2,category:'Disaster',tags:'',thumbnail:'',introVideoUrl:'',isPublished:true,isActive:true});
+                    const reload=await axios.get('http://localhost:5000/api/modules?limit=100');
+                    if(reload.data.success){setModules(reload.data.data.modules)}
+                  }
+                }catch(e){
+                  console.error('Create module failed',e); alert('Failed to create module');
+                }
+              }}
+            >Create Module</button>
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md disabled:opacity-60"
+              disabled={!selectedModuleId}
+              onClick={async()=>{
+                try{
+                  const payload={...moduleForm,tags:moduleForm.tags?moduleForm.tags.split(',').map(t=>t.trim()).filter(Boolean):[]};
+                  const res=await axios.put(`http://localhost:5000/api/modules/${selectedModuleId}`,payload,{headers:authHeaders()});
+                  if(res.data.success){
+                    alert('Module updated');
+                    const reload=await axios.get('http://localhost:5000/api/modules?limit=100');
+                    if(reload.data.success){setModules(reload.data.data.modules)}
+                  }
+                }catch(e){
+                  console.error('Update module failed',e); alert('Failed to update module');
+                }
+              }}
+            >Update Selected</button>
+          </div>
+        </div>
+        )}
+
+        {activeSection === 'quiz' && (
+        <>
+          <div className="bg-white border rounded-lg p-4 mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Select Module</label>
+            <select
+              className="w-full border rounded-md p-2"
+              value={selectedModuleId}
+              onChange={async (e) => {
+                const val = e.target.value;
+                setSelectedModuleId(val);
+                if (val) await loadQuiz(val);
+                else setQuiz(null);
+              }}
+            >
+              <option value="">-- Choose a module --</option>
+              {modules.map(m => (
+                <option key={m._id} value={m._id}>{m.title}</option>
+              ))}
+            </select>
+          </div>
+
+          {selectedModuleId && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white border rounded-lg p-4">
               <h2 className="text-lg font-semibold mb-4">Add Question</h2>
@@ -261,6 +385,8 @@ const AdminQuizPanel = () => {
               )}
             </div>
           </div>
+          )}
+        </>
         )}
       </div>
     </div>
